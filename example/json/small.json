@@ -1,0 +1,12 @@
+{
+	"name": "Alejandro",
+	"age": 24,
+	"guitars": [
+		{
+			"brand": "schecter"
+		},
+		{
+			"brand": "yamaha"
+		}
+	]
+}

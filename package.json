@@ -1,19 +1,28 @@
 {
   "name": "fast-json",
-  "version": "0.0.1",
-  "description": "",
+  "description": "A fast json stream parser.",
+  "version": "0.0.2",
+  "author": "Alejandro Santiago Nieto",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "chai": "3.x.x",
+    "jscs": "3.x.x",
+    "jshint": "2.x.x",
+    "mocha": "3.x.x"
+  },
   "main": "index.js",
+  "files": ["index.js", "lib"],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "test": "mocha test/*.js",
+    "jshint": "jshint index.js lib/*.js test/*.js",
+    "jscs": "jscs index.js lib/*.js test/*.js",
+    "jscs:fix": "jscs --fix index.js lib/*.js test/*.js",
+    "check": "npm run test && npm run jshint && npm run jscs && npm outdated"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alemures/fast-json.git"
-  },
-  "author": "Alejandro Santiago Nieto",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/alemures/fast-json/issues"
-  },
-  "homepage": "https://github.com/alemures/fast-json#readme"
+  }
 }
