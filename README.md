@@ -36,3 +36,11 @@ JSON file *citylots.json* of **189MB** from https://github.com/zemirco/sf-city-l
 * fast-json: 1.4s / 198MB RAM
 * JSON.parse: 2.2s / 640MB RAM
 * jsonparse: 13.7s
+
+## TODO
+* [**Performance**] Skip JSON sections that will never match the path.
+* [**Feature**] Make FastJson a Node.js Stream (is this worth it?).
+* [**Feature**] Multiple paths per FastJson instance.
+* [**Feature**] Process wildcards in paths.
+* [**Documentation**] Document public interface and create branch gh-pages using *jsdoc*.
+* [**Documentation**] More real life testing and examples.
