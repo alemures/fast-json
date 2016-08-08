@@ -39,6 +39,8 @@ JSON file *citylots.json* of **189MB** from https://github.com/zemirco/sf-city-l
 
 ## TODO
 * [**Performance**] Skip JSON sections that will never match the path.
+* [**Feature**] Return primitive and string values.
+* [**Feature**] Cache chunks to support fragmentation (value starts in a previous chunk)
 * [**Feature**] Make FastJson a Node.js Stream (is this worth it?).
 * [**Feature**] Multiple paths per FastJson instance.
 * [**Feature**] Process wildcards in paths.
