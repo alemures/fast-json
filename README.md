@@ -1,10 +1,10 @@
 fast-json
 ===
-A fast json stream parser.
+A lightning fast on the fly **JSON parser** able to return JSON values and structures from plain JSON strings. It's much faster than JSON.parse() and doesn't require any extra memory allocation for the data processed.
 
 ## Usage
-```
-var FastJson = require('../lib/FastJson');
+```javascript
+var FastJson = require('fast-json');
 
 var data = JSON.stringify({
   ireland: {
@@ -15,28 +15,25 @@ var data = JSON.stringify({
   }
 });
 
-var stream = new FastJson('ireland.people[0]');
+var fastJson = new FastJson();
 
-// Only returns json as string
-stream.onData = function (jsonText) {
-  console.log(typeof jsonText, jsonText);
-};
+fastJson.on('ireland.people[0]', (person) => {
+  console.log(person); // -> '{"name":"Alex"}'
+})
 
-stream.write(data);
+fastJson.write(data);
 ```
 
 ## Performance
 JSON file *citylots.json* of **189MB** from https://github.com/zemirco/sf-city-lots-json.
 
-* fast-json: 1.4s / 198MB RAM
+* fast-json: 0.65s / 198MB RAM
 * JSON.parse: 2.2s / 640MB RAM
 * jsonparse: 13.7s
 
 ## TODO
-* [**Performance**] Skip JSON sections that will never match the path.
 * [**Feature**] Cache chunks to support fragmentation (value starts in a previous chunk)
 * [**Feature**] Make FastJson a Node.js Stream (is this worth it?).
-* [**Feature**] Multiple paths per FastJson instance.
 * [**Feature**] Process wildcards in paths.
 * [**Documentation**] Document public interface and create branch gh-pages using *jsdoc*.
 * [**Documentation**] More real life testing and examples.

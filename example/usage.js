@@ -11,10 +11,10 @@ var data = JSON.stringify({
   }
 });
 
-var stream = new FastJson();
+var fastJson = new FastJson();
 
-stream.on('ireland.people[0].name', (jsonText) => {
+fastJson.on('ireland.people[0]', (jsonText) => {
   console.log(jsonText);
 });
 
-stream.write(data);
+fastJson.write(data);

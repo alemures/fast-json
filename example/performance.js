@@ -4,9 +4,9 @@ var fs = require('fs');
 
 var FastJson = require('../lib/FastJson');
 
-var stream = new FastJson();
+var fastJson = new FastJson();
 
-stream.on('features[293].geometry.coordinates[0][0]', (jsonText) => {
+fastJson.on('features[293].geometry.coordinates[0][0]', (jsonText) => {
   console.log('fast-json result:', jsonText);
 });
 
@@ -14,7 +14,7 @@ var file = fs.readFileSync(__dirname + '/json/citylots.json').toString();
 
 console.time('fast-json time');
 
-stream.write(file);
+fastJson.write(file);
 
 console.timeEnd('fast-json time');
 
