@@ -17,13 +17,8 @@ var data = JSON.stringify({
 
 var stream = new FastJson('ireland.people[0]');
 
-// JSON.parse() inside only for the 'path' result if it matches
-stream.onJson = function (jsonObject) {
-  console.log(typeof jsonObject, jsonObject);
-};
-
-// Only returns json as string so better performance
-stream.onText = function (jsonText) {
+// Only returns json as string
+stream.onData = function (jsonText) {
   console.log(typeof jsonText, jsonText);
 };
 
