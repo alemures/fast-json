@@ -11,11 +11,10 @@ var data = JSON.stringify({
   }
 });
 
-var stream = new FastJson('ireland.people[0]');
+var stream = new FastJson();
 
-// Only returns json as string
-stream.onData = function (jsonText) {
+stream.on('ireland.people[0].name', (jsonText) => {
   console.log(jsonText);
-};
+});
 
 stream.write(data);
