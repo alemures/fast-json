@@ -12,7 +12,10 @@
     "mocha": "3.x.x"
   },
   "main": "index.js",
-  "files": ["index.js", "lib"],
+  "files": [
+    "index.js",
+    "lib"
+  ],
   "scripts": {
     "test": "mocha test/*.js",
     "jshint": "jshint index.js lib/*.js test/*.js",

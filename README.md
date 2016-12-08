@@ -2,6 +2,9 @@ fast-json
 ===
 A lightning fast on the fly **JSON parser** able to return JSON values and structures from plain JSON strings. It's much faster than JSON.parse() and doesn't require any extra memory allocation for the data processed.
 
+## Install
+npm install fast-json
+
 ## Usage
 ```javascript
 var FastJson = require('fast-json');
@@ -17,9 +20,21 @@ var data = JSON.stringify({
 
 var fastJson = new FastJson();
 
-fastJson.on('ireland.people[0]', (person) => {
-  console.log(person); // -> '{"name":"Alex"}'
-})
+fastJson.on('ireland.people[0]', (value) => {
+  console.log('ireland.people[0] ->', value);
+});
+
+fastJson.on('spain', (value) => {
+  console.log('spain ->', value);
+});
+
+fastJson.on('ireland.people', (value) => {
+  console.log('ireland.people ->', value);
+});
+
+fastJson.on('spain.people[1].name', (value) => {
+  console.log('spain.people[1].name ->', value);
+});
 
 fastJson.write(data);
 ```
