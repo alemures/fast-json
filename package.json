@@ -1,7 +1,7 @@
 {
   "name": "fast-json",
   "description": "A fast json stream parser.",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "author": "Alejandro Santiago Nieto",
   "license": "MIT",
   "dependencies": {},
