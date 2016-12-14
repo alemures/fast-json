@@ -42,7 +42,7 @@ fastJson.write(data);
 ## Performance
 JSON file *citylots.json* of **189MB** from https://github.com/zemirco/sf-city-lots-json.
 
-* fast-json: 0.89s / 198MB RAM
+* fast-json: 0.76s / 198MB RAM
 * JSON.parse: 1.9s / 640MB RAM
 * jsonparse: 9.6s / 370MB RAM
 
