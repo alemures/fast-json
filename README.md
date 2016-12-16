@@ -48,8 +48,8 @@ JSON file *citylots.json* of **189MB** from https://github.com/zemirco/sf-city-l
 
 ## TODO
 * [**Improvement**] Tolerate malformed JSONs.
-* [**Feature**] Cache chunks to support fragmentation (value starts in a previous chunk).
-* [**Feature**] Make FastJson a Node.js Stream (is this worth it?).
+* [**Feature**] Allow Buffers.
 * [**Feature**] Process wildcards in paths.
+* [**Feature**] Public method to cancel actual write().
 * [**Documentation**] Document public interface and create branch gh-pages using *jsdoc*.
 * [**Documentation**] More real life testing and examples.
