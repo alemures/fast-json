@@ -131,5 +131,27 @@ describe('FastJson', () => {
 
       expect(nMatches).to.be.equal(1);
     });
+
+    it('should process Buffer instances', () => {
+      var fastJson = new FastJson();
+      var nMatches = 0;
+
+      fastJson.on('a', (value) => {
+        expect(value).to.be.deep.equal(new Buffer('1'));
+        nMatches++;
+      });
+
+      fastJson.on('b[0].c', (value) => {
+        expect(value).to.be.deep.equal(new Buffer('{"d":5}'));
+        nMatches++;
+      });
+
+      fastJson.write(new Buffer(JSON.stringify({
+        a: 1,
+        b: [{ c: { d: 5 } }]
+      })));
+
+      expect(nMatches).to.be.equal(2);
+    });
   });
 });
