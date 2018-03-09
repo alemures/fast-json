@@ -36,6 +36,21 @@ fastJson.on('spain.people[1].name', (value) => {
   console.log('spain.people[1].name ->', value);
 });
 
+// wildcard for each property name
+fastJson.on('spain.people[1].*', (value) => {
+  console.log('spain.people[1].* ->', value);
+});
+
+// wildcard for each array element
+fastJson.on('spain.people[*]', (value) => {
+  console.log('spain.people[*] ->', value);
+});
+
+// emit event when whole doc parsed
+fastJson.on('', (value) => {
+  console.log('whole doc ->', value);
+});
+
 fastJson.write(data);
 // or
 fastJson.write(new Buffer(data));
