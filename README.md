@@ -36,6 +36,11 @@ fastJson.on('spain.people[1].name', (value) => {
   console.log('spain.people[1].name ->', value);
 });
 
+// wildcard for property of each array element
+fastJson.on('spain.people[*].name', (value) => {
+  console.log('spain.people[*].name ->', value.toString());
+});
+
 // wildcard for each property name
 fastJson.on('spain.people[1].*', (value) => {
   console.log('spain.people[1].* ->', value);
