@@ -119,12 +119,12 @@ describe('FastJson', () => {
       var nMatches = 0;
 
       fastJson.on('a.a', (value) => {
-        expect(value).to.be.equal('\\"\\\\');
+        expect(value).to.be.equal('\\\\\\"\\\\');
         nMatches++;
       });
 
       fastJson.write(JSON.stringify({
-        a: { a: '"\\' },
+        a: { a: '\\"\\' },
         b: { a: ']}' },
         c: { a: '{[' }
       }));
@@ -152,6 +152,24 @@ describe('FastJson', () => {
       })));
 
       expect(nMatches).to.be.equal(2);
+    });
+
+    it('should return the whole object', () => {
+      var fastJson = new FastJson();
+      var nMatches = 0;
+
+      fastJson.on('', (value) => {
+        expect(value).to.be.equal('{"a":true,"b":"string","c":25}');
+        nMatches++;
+      });
+
+      fastJson.write(JSON.stringify({
+        a: true,
+        b: 'string',
+        c: 25
+      }));
+
+      expect(nMatches).to.be.equal(1);
     });
   });
 });
