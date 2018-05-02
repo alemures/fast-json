@@ -1,17 +1,15 @@
-'use strict';
+const FastJson = require('../lib/FastJson');
 
-var FastJson = require('../lib/FastJson');
-
-var data = JSON.stringify({
+const data = JSON.stringify({
   ireland: {
-    people: [{ name: 'Alex' }, { name: 'John' }, { name: 'Cian' }]
+    people: [{ name: 'Alex' }, { name: 'John' }, { name: 'Cian' }],
   },
   spain: {
-    people: [{ name: 'Antonio' }, { name: 'Juan' }, { name: 'Pedro' }]
-  }
+    people: [{ name: 'Antonio' }, { name: 'Juan' }, { name: 'Pedro' }],
+  },
 });
 
-var fastJson = new FastJson();
+const fastJson = new FastJson();
 
 fastJson.on('ireland.people[0]', (value) => {
   console.log('ireland.people[0] ->', value);

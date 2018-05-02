@@ -1,8 +1,4 @@
-'use strict';
-
-const describe = require('mocha').describe;
-const it = require('mocha').it;
-const expect = require('chai').expect;
+const { expect } = require('chai');
 
 const FastJson = require('../index');
 
@@ -15,8 +11,8 @@ describe('FastJson', () => {
 
   describe('write', () => {
     it('should return primitives', () => {
-      var fastJson = new FastJson();
-      var nMatches = 0;
+      const fastJson = new FastJson();
+      let nMatches = 0;
 
       fastJson.on('a', (value) => {
         expect(value).to.be.equal('1');
@@ -39,13 +35,15 @@ describe('FastJson', () => {
         nMatches++;
       });
 
-      fastJson.write(JSON.stringify({ a: 1, b: 'hello', c: true, d: null, e: 1.2323 }));
+      fastJson.write(JSON.stringify({
+        a: 1, b: 'hello', c: true, d: null, e: 1.2323,
+      }));
       expect(nMatches).to.be.equal(5);
     });
 
     it('should return arrays and objects', () => {
-      var fastJson = new FastJson();
-      var nMatches = 0;
+      const fastJson = new FastJson();
+      let nMatches = 0;
 
       fastJson.on('a', (value) => {
         expect(value).to.be.equal('{"c":1}');
@@ -61,8 +59,8 @@ describe('FastJson', () => {
     });
 
     it('should\'t return anything', () => {
-      var fastJson = new FastJson();
-      fastJson.on('a', (value) => {
+      const fastJson = new FastJson();
+      fastJson.on('a', () => {
         expect(true).to.be.equal(false);
       });
 
@@ -70,8 +68,8 @@ describe('FastJson', () => {
     });
 
     it('should return inner values', () => {
-      var fastJson = new FastJson();
-      var nMatches = 0;
+      const fastJson = new FastJson();
+      let nMatches = 0;
 
       fastJson.on('a.a[0].a', (value) => {
         expect(value).to.be.equal('5');
@@ -92,14 +90,14 @@ describe('FastJson', () => {
 
       fastJson.write(JSON.stringify({
         a: { a: [{ a: 5 }, null, true, [10]] },
-        b: { a: { a: { a: null } } }
+        b: { a: { a: { a: null } } },
       }));
       expect(nMatches).to.be.equal(4);
     });
 
     it('should return values from a top level array', () => {
-      var fastJson = new FastJson();
-      var nMatches = 0;
+      const fastJson = new FastJson();
+      let nMatches = 0;
 
       fastJson.on('[0]', (value) => {
         expect(value).to.be.equal('1');
@@ -115,8 +113,8 @@ describe('FastJson', () => {
     });
 
     it('should handle escaped strings', () => {
-      var fastJson = new FastJson();
-      var nMatches = 0;
+      const fastJson = new FastJson();
+      let nMatches = 0;
 
       fastJson.on('a.a', (value) => {
         expect(value).to.be.equal('\\\\\\"\\\\');
@@ -126,37 +124,37 @@ describe('FastJson', () => {
       fastJson.write(JSON.stringify({
         a: { a: '\\"\\' },
         b: { a: ']}' },
-        c: { a: '{[' }
+        c: { a: '{[' },
       }));
 
       expect(nMatches).to.be.equal(1);
     });
 
     it('should process Buffer instances', () => {
-      var fastJson = new FastJson();
-      var nMatches = 0;
+      const fastJson = new FastJson();
+      let nMatches = 0;
 
       fastJson.on('a', (value) => {
-        expect(value).to.be.deep.equal(new Buffer('1'));
+        expect(value).to.be.deep.equal(Buffer.from('1'));
         nMatches++;
       });
 
       fastJson.on('b[0].c', (value) => {
-        expect(value).to.be.deep.equal(new Buffer('{"d":5}'));
+        expect(value).to.be.deep.equal(Buffer.from('{"d":5}'));
         nMatches++;
       });
 
-      fastJson.write(new Buffer(JSON.stringify({
+      fastJson.write(Buffer.from(JSON.stringify({
         a: 1,
-        b: [{ c: { d: 5 } }]
+        b: [{ c: { d: 5 } }],
       })));
 
       expect(nMatches).to.be.equal(2);
     });
 
     it('should return the whole object', () => {
-      var fastJson = new FastJson();
-      var nMatches = 0;
+      const fastJson = new FastJson();
+      let nMatches = 0;
 
       fastJson.on('', (value) => {
         expect(value).to.be.equal('{"a":true,"b":"string","c":25}');
@@ -166,7 +164,7 @@ describe('FastJson', () => {
       fastJson.write(JSON.stringify({
         a: true,
         b: 'string',
-        c: 25
+        c: 25,
       }));
 
       expect(nMatches).to.be.equal(1);
