@@ -170,4 +170,29 @@ describe('FastJson', () => {
       expect(nMatches).to.be.equal(1);
     });
   });
+
+  describe('skip', () => {
+    it('should skip actual written json', () => {
+      const fastJson = new FastJson();
+      let nMatches = 0;
+
+      fastJson.on('[0]', (value) => {
+        expect(value).to.be.equal('1');
+        nMatches++;
+      });
+
+      fastJson.on('[1]', (value) => {
+        expect(value).to.be.equal('2');
+        nMatches++;
+        fastJson.skip();
+      });
+
+      fastJson.on('[2]', () => {
+        expect(true).to.be.equal(false);
+      });
+
+      fastJson.write(JSON.stringify([1, 2, 3]));
+      expect(nMatches).to.be.equal(2);
+    });
+  });
 });
