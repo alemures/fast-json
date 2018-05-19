@@ -195,4 +195,20 @@ describe('FastJson', () => {
       expect(nMatches).to.be.equal(2);
     });
   });
+
+  describe('_normalizePath', () => {
+    it('should normalize a path as String', () => {
+      let path = FastJson._normalizePath('a.b[5].c');
+      expect(path).to.be.equal('/a/b/5/c/');
+      path = FastJson._normalizePath('[1][2].a');
+      expect(path).to.be.equal('/1/2/a/');
+    });
+
+    it('should normalize a path as Array', () => {
+      let path = FastJson._normalizePath(['a', 'b', '5', 'c']);
+      expect(path).to.be.equal('/a/b/5/c/');
+      path = FastJson._normalizePath(['1', '2', 'a']);
+      expect(path).to.be.equal('/1/2/a/');
+    });
+  });
 });
