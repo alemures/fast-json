@@ -1,6 +1,7 @@
 const { expect } = require('chai');
 
-const FastJson = require('../index');
+const FastJson = require('../lib/FastJson');
+const { EventTree } = require('../lib/EventTree');
 
 describe('FastJson', () => {
   describe('constructor', () => {
@@ -61,6 +62,15 @@ describe('FastJson', () => {
     it('should\'t return anything', () => {
       const fastJson = new FastJson();
       fastJson.on('a', () => {
+        expect(true).to.be.equal(false);
+      });
+
+      fastJson.write(JSON.stringify({ b: 1 }));
+    });
+
+    it('should\'t return anything for empty path', () => {
+      const fastJson = new FastJson();
+      fastJson.on('', () => {
         expect(true).to.be.equal(false);
       });
 
@@ -151,24 +161,6 @@ describe('FastJson', () => {
 
       expect(nMatches).to.be.equal(2);
     });
-
-    it('should return the whole object', () => {
-      const fastJson = new FastJson();
-      let nMatches = 0;
-
-      fastJson.on('', (value) => {
-        expect(value).to.be.equal('{"a":true,"b":"string","c":25}');
-        nMatches++;
-      });
-
-      fastJson.write(JSON.stringify({
-        a: true,
-        b: 'string',
-        c: 25,
-      }));
-
-      expect(nMatches).to.be.equal(1);
-    });
   });
 
   describe('skip', () => {
@@ -195,20 +187,28 @@ describe('FastJson', () => {
       expect(nMatches).to.be.equal(2);
     });
   });
+});
 
-  describe('_normalizePath', () => {
-    it('should normalize a path as String', () => {
-      let path = FastJson._normalizePath('a.b[5].c');
-      expect(path).to.be.equal('/a/b/5/c/');
-      path = FastJson._normalizePath('[1][2].a');
-      expect(path).to.be.equal('/1/2/a/');
+describe('EventTree', () => {
+  describe('constructor', () => {
+    it('should create an EventTree instance', () => {
+      expect(new EventTree()).to.be.instanceOf(EventTree);
+    });
+  });
+
+  describe('_parsePath', () => {
+    it('should parse a path as String', () => {
+      const eventTree = new EventTree('/');
+      let path = eventTree._parsePath('a.b[5].c');
+      expect(path).to.be.deep.equal(['a', 'b', '5', 'c']);
+      path = eventTree._parsePath('[1][2].a');
+      expect(path).to.be.deep.equal(['1', '2', 'a']);
     });
 
-    it('should normalize a path as Array', () => {
-      let path = FastJson._normalizePath(['a', 'b', '5', 'c']);
-      expect(path).to.be.equal('/a/b/5/c/');
-      path = FastJson._normalizePath(['1', '2', 'a']);
-      expect(path).to.be.equal('/1/2/a/');
+    it('should parse a path as Array just returning it', () => {
+      const eventTree = new EventTree('/');
+      const path = eventTree._parsePath(['a', 'b', '5', 'c']);
+      expect(path).to.be.deep.equal(['a', 'b', '5', 'c']);
     });
   });
 });

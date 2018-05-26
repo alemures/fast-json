@@ -35,6 +35,6 @@ fastJson.on('*.people[*].name', (value) => {
   console.log('*.people[*].name ->', value);
 });
 
-fastJson._events.tree.print();
+console.log(fastJson._events.tree.toString());
 
 fastJson.write(data);
