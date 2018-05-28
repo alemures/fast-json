@@ -198,17 +198,16 @@ describe('EventTree', () => {
 
   describe('_parsePath', () => {
     it('should parse a path as String', () => {
-      const eventTree = new EventTree('/');
-      let path = eventTree._parsePath('a.b[5].c');
+      let path = EventTree._parsePath('a.b[5].c');
       expect(path).to.be.deep.equal(['a', 'b', '5', 'c']);
-      path = eventTree._parsePath('[1][2].a');
+      path = EventTree._parsePath('[1][2].a');
       expect(path).to.be.deep.equal(['1', '2', 'a']);
     });
 
     it('should parse a path as Array just returning it', () => {
-      const eventTree = new EventTree('/');
-      const path = eventTree._parsePath(['a', 'b', '5', 'c']);
-      expect(path).to.be.deep.equal(['a', 'b', '5', 'c']);
+      const origPath = ['a', 'b', '5', 'c'];
+      const path = EventTree._parsePath(origPath);
+      expect(path).to.be.deep.equal(origPath);
     });
   });
 });
