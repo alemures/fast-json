@@ -10,6 +10,9 @@ fastJson.on('features[293].geometry.coordinates[0][0]', (jsonText) => {
 
 const file = fs.readFileSync(`${__dirname}/json/citylots.json`).toString();
 
+fastJson._events.tree.expandNodes();
+console.log(fastJson._events.tree.toString());
+
 console.time('fast-json time');
 
 fastJson.write(file);
