@@ -10,7 +10,7 @@ describe('FastJson', () => {
     });
   });
 
-  describe('write', () => {
+  describe('write/on', () => {
     it('should return primitives', () => {
       const fastJson = new FastJson();
       let nMatches = 0;
@@ -160,6 +160,32 @@ describe('FastJson', () => {
       })));
 
       expect(nMatches).to.be.equal(2);
+    });
+
+    it('should return all values in an array', () => {
+      const fastJson = new FastJson();
+      let nMatches = 0;
+
+      fastJson.on('aa[*]', (value) => {
+        expect(value).to.be.equal(`{"a":${nMatches}}`);
+        nMatches++;
+      });
+
+      fastJson.write(JSON.stringify({ aa: [{ a: 0 }, { a: 1 }, { a: 2 }] }));
+      expect(nMatches).to.be.equal(3);
+    });
+
+    it('should return all values in an object', () => {
+      const fastJson = new FastJson();
+      let nMatches = 0;
+
+      fastJson.on('aa.*', (value) => {
+        expect(value).to.be.equal(`${nMatches}`);
+        nMatches++;
+      });
+
+      fastJson.write(JSON.stringify({ aa: { a: 0, b: 1, c: 2 } }));
+      expect(nMatches).to.be.equal(3);
     });
   });
 
