@@ -218,7 +218,7 @@ describe('FastJson', () => {
 describe('EventTree', () => {
   describe('constructor', () => {
     it('should create an EventTree instance', () => {
-      expect(new EventTree()).to.be.instanceOf(EventTree);
+      expect(new EventTree('/')).to.be.instanceOf(EventTree);
     });
   });
 
