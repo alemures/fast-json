@@ -36,6 +36,14 @@ fastJson.on('spain.people[1].name', (value) => {
   console.log('spain.people[1].name ->', value);
 });
 
+fastJson.on('spain.people[*].name', (value) => {
+  console.log('spain.people[*].name ->', value);
+});
+
+fastJson.on('*.people[*].name', (value) => {
+  console.log('*.people[*].name ->', value);
+});
+
 fastJson.write(data);
 // or
 fastJson.write(new Buffer(data));
