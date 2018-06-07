@@ -1,6 +1,7 @@
 const { expect } = require('chai');
 
-const FastJson = require('../index');
+const FastJson = require('../lib/FastJson');
+const { EventTree } = require('../lib/EventTree');
 
 describe('FastJson', () => {
   describe('constructor', () => {
@@ -9,7 +10,7 @@ describe('FastJson', () => {
     });
   });
 
-  describe('write', () => {
+  describe('write/on', () => {
     it('should return primitives', () => {
       const fastJson = new FastJson();
       let nMatches = 0;
@@ -61,6 +62,15 @@ describe('FastJson', () => {
     it('should\'t return anything', () => {
       const fastJson = new FastJson();
       fastJson.on('a', () => {
+        expect(true).to.be.equal(false);
+      });
+
+      fastJson.write(JSON.stringify({ b: 1 }));
+    });
+
+    it('should\'t return anything for empty path', () => {
+      const fastJson = new FastJson();
+      fastJson.on('', () => {
         expect(true).to.be.equal(false);
       });
 
@@ -152,22 +162,30 @@ describe('FastJson', () => {
       expect(nMatches).to.be.equal(2);
     });
 
-    it('should return the whole object', () => {
+    it('should return all values in an array', () => {
       const fastJson = new FastJson();
       let nMatches = 0;
 
-      fastJson.on('', (value) => {
-        expect(value).to.be.equal('{"a":true,"b":"string","c":25}');
+      fastJson.on('aa[*]', (value) => {
+        expect(value).to.be.equal(`{"a":${nMatches}}`);
         nMatches++;
       });
 
-      fastJson.write(JSON.stringify({
-        a: true,
-        b: 'string',
-        c: 25,
-      }));
+      fastJson.write(JSON.stringify({ aa: [{ a: 0 }, { a: 1 }, { a: 2 }] }));
+      expect(nMatches).to.be.equal(3);
+    });
 
-      expect(nMatches).to.be.equal(1);
+    it('should return all values in an object', () => {
+      const fastJson = new FastJson();
+      let nMatches = 0;
+
+      fastJson.on('aa.*', (value) => {
+        expect(value).to.be.equal(`${nMatches}`);
+        nMatches++;
+      });
+
+      fastJson.write(JSON.stringify({ aa: { a: 0, b: 1, c: 2 } }));
+      expect(nMatches).to.be.equal(3);
     });
   });
 
@@ -195,20 +213,27 @@ describe('FastJson', () => {
       expect(nMatches).to.be.equal(2);
     });
   });
+});
 
-  describe('_normalizePath', () => {
-    it('should normalize a path as String', () => {
-      let path = FastJson._normalizePath('a.b[5].c');
-      expect(path).to.be.equal('/a/b/5/c/');
-      path = FastJson._normalizePath('[1][2].a');
-      expect(path).to.be.equal('/1/2/a/');
+describe('EventTree', () => {
+  describe('constructor', () => {
+    it('should create an EventTree instance', () => {
+      expect(new EventTree('/')).to.be.instanceOf(EventTree);
+    });
+  });
+
+  describe('_parsePath', () => {
+    it('should parse a path as String', () => {
+      let path = EventTree._parsePath('a.b[5].c');
+      expect(path).to.be.deep.equal(['a', 'b', '5', 'c']);
+      path = EventTree._parsePath('[1][2].a');
+      expect(path).to.be.deep.equal(['1', '2', 'a']);
     });
 
-    it('should normalize a path as Array', () => {
-      let path = FastJson._normalizePath(['a', 'b', '5', 'c']);
-      expect(path).to.be.equal('/a/b/5/c/');
-      path = FastJson._normalizePath(['1', '2', 'a']);
-      expect(path).to.be.equal('/1/2/a/');
+    it('should parse a path as Array just returning it', () => {
+      const origPath = ['a', 'b', '5', 'c'];
+      const path = EventTree._parsePath(origPath);
+      expect(path).to.be.deep.equal(origPath);
     });
   });
 });
