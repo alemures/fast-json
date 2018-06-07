@@ -49,7 +49,6 @@ JSON file *citylots.json* of **189MB** from https://github.com/zemirco/sf-city-l
 * jsonparse: 15.0s / 1,100MB RAM (Only reading, it wasn't able to return a value)
 
 ## TODO
-* [**Feature**] Allow chunked JSON.
 * [**Feature**] Match more glob patters.
 * [**Feature**] Add more flexibility to event listeners (on, once, off, etc).
 * [**Documentation**] Create branch gh-pages using *jsdoc*.

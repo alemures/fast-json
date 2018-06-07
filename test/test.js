@@ -187,6 +187,33 @@ describe('FastJson', () => {
       fastJson.write(JSON.stringify({ aa: { a: 0, b: 1, c: 2 } }));
       expect(nMatches).to.be.equal(3);
     });
+
+    it('should work with chunked writes', () => {
+      const fastJson = new FastJson();
+      let nMatches = 0;
+
+      fastJson.on('a', (value) => {
+        expect(value).to.be.equal('111');
+        nMatches++;
+      });
+
+      fastJson.on('b.c', (value) => {
+        expect(value).to.be.equal('[1,2,3]');
+        nMatches++;
+      });
+
+      fastJson.on('c', (value) => {
+        expect(value).to.be.equal('h\\ola');
+        nMatches++;
+      });
+
+      fastJson.write('{"a":11');
+      fastJson.write('1}{"b":{"c":[1,2,3]}}{"c":"h\\');
+      fastJson.write('ola"}{"b":{"c":[1,2');
+      fastJson.write(',3]}}{"d":{"lol":["');
+      fastJson.write('55"]}}');
+      expect(nMatches).to.be.equal(4);
+    });
   });
 
   describe('skip', () => {
