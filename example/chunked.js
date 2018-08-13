@@ -14,6 +14,10 @@ fastJson.on('c', (value) => {
   console.log('c ->', value);
 });
 
+fastJson.on('d.lol[0]', (value) => {
+  console.log('d.lol[0] ->', value);
+});
+
 fastJson.write('{"a":11');
 fastJson.write('1}{"b":{"c":[1,2,3]}}{"c":"h\\');
 fastJson.write('ola"}{"b":{"c":[1,2');
