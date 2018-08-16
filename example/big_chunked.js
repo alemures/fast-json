@@ -5,19 +5,23 @@ const FastJson = require('../lib/FastJson');
 const fastJson = new FastJson();
 
 fastJson.on('tortilla', (jsonText) => {
-  // console.log('fast-json result:', jsonText);
+  console.log('fast-json result:', jsonText);
+});
+
+fastJson.on('features[293].geometry.coordinates[0][0]', (jsonText) => {
+  console.log('fast-json result:', jsonText);
 });
 
 const file = fs.readFileSync(`${__dirname}/json/citylots.json`).toString();
 
-const fileChunks = stringChunk(file, 1e+7);
+const fileChunks = stringChunk(file, 1e+6);
 
 console.log(fileChunks.length, 'chunks')
 
 console.time('fast-json time');
 
 fileChunks.forEach((chunk) => {
-  console.log('writting', chunk.length);
+  // console.log('writting', chunk.length);
   fastJson.write(chunk);
 });
 // fastJson.write(file);
