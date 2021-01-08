@@ -5,12 +5,12 @@
   "author": "Alejandro Santiago Nieto",
   "license": "MIT",
   "devDependencies": {
-    "chai": "^4.1.2",
-    "eslint": "^4.19.1",
-    "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.12.0",
+    "chai": "^4.2.0",
+    "eslint": "^7.17.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
     "istanbul": "^0.4.5",
-    "mocha": "^5.2.0"
+    "mocha": "^8.2.1"
   },
   "main": "index.js",
   "files": [
