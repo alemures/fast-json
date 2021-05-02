@@ -1,0 +1,8 @@
+{
+  "name": "fast-json-benchmark",
+  "version": "1.0.0",
+  "description": "fast-json benchmarks",
+  "dependencies": {
+    "benchmark": "^2.1.4"
+  }
+}

@@ -20,8 +20,9 @@
   "scripts": {
     "test": "mocha test/*.js",
     "test:cover": "istanbul cover _mocha test/*.js",
-    "lint": "eslint index.js lib/*.js test/*.js example/*.js",
-    "lint:fix": "eslint index.js lib/*.js test/*.js example/*.js --fix",
+    "benchmark": "node benchmark/index.js",
+    "lint": "eslint index.js lib/*.js test/*.js example/*.js benchmark/*.js",
+    "lint:fix": "eslint index.js lib/*.js test/*.js example/*.js benchmark/*.js --fix",
     "check": "npm test && npm run lint && npm outdated"
   },
   "repository": {
