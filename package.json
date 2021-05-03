@@ -5,12 +5,13 @@
   "author": "Alejandro Santiago Nieto",
   "license": "MIT",
   "devDependencies": {
-    "chai": "^4.1.2",
-    "eslint": "^4.19.1",
-    "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.12.0",
-    "istanbul": "^0.4.5",
-    "mocha": "^5.2.0"
+    "chai": "^4.3.4",
+    "eslint": "^7.25.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "jsdoc": "^3.6.6",
+    "mocha": "^8.3.2",
+    "nyc": "^15.1.0"
   },
   "main": "index.js",
   "files": [
@@ -19,10 +20,11 @@
   ],
   "scripts": {
     "test": "mocha test/*.js",
-    "test:cover": "istanbul cover _mocha test/*.js",
+    "test:cover": "nyc --reporter=lcov --reporter=text-summary npm test",
     "lint": "eslint index.js lib/*.js test/*.js example/*.js",
     "lint:fix": "eslint index.js lib/*.js test/*.js example/*.js --fix",
-    "check": "npm test && npm run lint && npm outdated"
+    "check": "npm test && npm run lint && npm outdated",
+    "doc": "jsdoc ./lib/ ./package.json ./README.md -d ./doc"
   },
   "repository": {
     "type": "git",
