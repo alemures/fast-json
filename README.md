@@ -21,7 +21,6 @@ const data = JSON.stringify({
   'unknown.country': {
     people: [{ name: 'Frank' }, { name: 'Paul' }],
   },
-  huge_list: [1, 2, 3],
 });
 
 const fastJson = new FastJson();
