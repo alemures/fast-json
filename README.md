@@ -3,30 +3,27 @@ fast-json
 A lightning fast on the fly **JSON parser** able to return JSON values and structures from plain JSON as `String` or `Buffer`. It's much faster than JSON.parse() and doesn't require any extra memory allocation for the data processed.
 
 ## Install
+```
 npm install fast-json
+```
 
 ## Usage
 ```javascript
-var FastJson = require('fast-json');
+const FastJson = require('fast-json');
 
-var data = JSON.stringify({
+const data = JSON.stringify({
   ireland: {
-    people: [{ name: 'Alex' }, { name: 'John' }, { name: 'Cian' }]
+    people: [{ name: 'Alex' }, { name: 'John' }, { name: 'Cian' }],
   },
   spain: {
-    people: [{ name: 'Antonio' }, { name: 'Juan' }, { name: 'Pedro' }]
-  }
+    people: [{ name: 'Antonio' }, { name: 'Juan' }, { name: 'Pedro' }],
+  },
+  'unknown.country': {
+    people: [{ name: 'Frank' }, { name: 'Paul' }],
+  },
 });
 
-var fastJson = new FastJson();
-
-fastJson.on('ireland.people[0]', (value) => {
-  console.log('ireland.people[0] ->', value);
-});
-
-fastJson.on('spain', (value) => {
-  console.log('spain ->', value);
-});
+const fastJson = new FastJson();
 
 fastJson.on('ireland.people', (value) => {
   console.log('ireland.people ->', value);
@@ -34,6 +31,13 @@ fastJson.on('ireland.people', (value) => {
 
 fastJson.on('spain.people[1].name', (value) => {
   console.log('spain.people[1].name ->', value);
+});
+
+// Path as Array to allow keys with dots
+fastJson.on(['unknown.country', 'people', '0', 'name'], (value) => {
+  console.log(['unknown.country', 'people', '0', 'name'], value);
+  // Stop parsing JSON usefull when have all we need improving performance
+  fastJson.skip();
 });
 
 fastJson.on('spain.people[*].name', (value) => {
@@ -46,7 +50,7 @@ fastJson.on('*.people[*].name', (value) => {
 
 fastJson.write(data);
 // or
-fastJson.write(new Buffer(data));
+fastJson.write(Buffer.from(data));
 ```
 
 ## Performance

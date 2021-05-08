@@ -7,17 +7,12 @@ const data = JSON.stringify({
   spain: {
     people: [{ name: 'Antonio' }, { name: 'Juan' }, { name: 'Pedro' }],
   },
+  'unknown.country': {
+    people: [{ name: 'Frank' }, { name: 'Paul' }],
+  },
 });
 
 const fastJson = new FastJson();
-
-fastJson.on('ireland.people[0]', (value) => {
-  console.log('ireland.people[0] ->', value);
-});
-
-fastJson.on('spain', (value) => {
-  console.log('spain ->', value);
-});
 
 fastJson.on('ireland.people', (value) => {
   console.log('ireland.people ->', value);
@@ -25,6 +20,13 @@ fastJson.on('ireland.people', (value) => {
 
 fastJson.on('spain.people[1].name', (value) => {
   console.log('spain.people[1].name ->', value);
+});
+
+// Path as Array to allow keys with dots
+fastJson.on(['unknown.country', 'people', '0', 'name'], (value) => {
+  console.log(['unknown.country', 'people', '0', 'name'], value);
+  // Stop parsing JSON usefull when have all we need improving performance
+  fastJson.skip();
 });
 
 fastJson.on('spain.people[*].name', (value) => {

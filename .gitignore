@@ -1,3 +1,5 @@
 node_modules/
 coverage/
 example/json/citylots.json
+.nyc_output/
+doc
