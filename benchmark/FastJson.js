@@ -1,4 +1,4 @@
-// Commit a6d73b0da1a37f48e605b6f17c79d5c3ac702e32
+// Commit 56b20798f15867dbb9b22158a68e676b7d09ed21
 
 const EventEmitter = require('events');
 
@@ -22,7 +22,7 @@ const SEP = '/';
 
 class FastJson {
   /**
-   * @param {Object} [options]
+   * @param {Object} [options] The fast-json configuration object.
    */
   constructor(options) {
     this._options = options || {};
@@ -37,8 +37,9 @@ class FastJson {
   }
 
   /**
-   * @param {Array|String} path
-   * @param {Function} listener
+   * Adds a listener function for the provided path.
+   * @param {Array|String} path The JSON path to get values.
+   * @param {FastJson~jsonListener} listener The function called after finding the JSON path.
    */
   on(path, listener) {
     const normPath = FastJson._normalizePath(path);
@@ -47,7 +48,8 @@ class FastJson {
   }
 
   /**
-   * @param {String|Buffer} data
+   * Start processing JSON using the defined paths in {@link FastJson#on} method.
+   * @param {String|Buffer} data The JSON to process.
    */
   write(data) {
     for (let i = 0; i < data.length && !this._skipped; i++) {
@@ -82,6 +84,9 @@ class FastJson {
     }
   }
 
+  /**
+   * Stop processing the last JSON provided in the {@link FastJson#write} method.
+   */
   skip() {
     this._skipped = true;
   }
@@ -99,6 +104,7 @@ class FastJson {
    * @param {Number} openChar
    * @param {Number} closeChar
    * @returns {Number}
+   * @private
    */
   _onOpenBlock(data, index, type, openChar, closeChar) {
     const path = this._resolvePath(data);
@@ -124,6 +130,7 @@ class FastJson {
   /**
    * @param {String|Buffer} data
    * @param {Number} index
+   * @private
    */
   _onCloseBlock(data, index) {
     const frame = this._stack.pop();
@@ -138,6 +145,7 @@ class FastJson {
    * @param {String|Buffer} data
    * @param {Number} index
    * @returns {Number}
+   * @private
    */
   _onQuote(data, index) {
     const frame = this._getFrame();
@@ -176,6 +184,7 @@ class FastJson {
    * @param {String|Buffer} data
    * @param {Number} index
    * @returns {Number}
+   * @private
    */
   _onPrimitive(data, index) {
     const frame = this._getFrame();
@@ -206,6 +215,7 @@ class FastJson {
    * @param {Number} openChar
    * @param {Number} closeChar
    * @returns {Number}
+   * @private
    */
   static _skipBlock(data, index, openChar, closeChar) {
     let blockDepth = 1;
@@ -235,6 +245,7 @@ class FastJson {
    * @param {String|Buffer} data
    * @param {Number} index
    * @returns {Number}
+   * @private
    */
   static _parseString(data, index) {
     for (let i = index + 1; ;i++) {
@@ -250,6 +261,7 @@ class FastJson {
    * @param {String|Buffer} data
    * @param {Number} index
    * @returns {Number}
+   * @private
    */
   static _parsePrimitive(data, index) {
     for (let i = index; ;i++) {
@@ -265,6 +277,7 @@ class FastJson {
    * @param {String|Buffer} data
    * @param {Object} frame
    * @returns {String}
+   * @private
    */
   _getParentKey(data, frame) {
     if (frame.type === TYPE_ARRAY) {
@@ -277,6 +290,7 @@ class FastJson {
   /**
    * @param {String|Buffer} data
    * @returns {String}
+   * @private
    */
   _resolvePath(data) {
     if (this._stack.length === 0) {
@@ -289,6 +303,7 @@ class FastJson {
 
   /**
    * @return {Object}
+   * @private
    */
   _getFrame() {
     return this._stack[this._stack.length - 1];
@@ -297,6 +312,7 @@ class FastJson {
   /**
    * @param {String} path
    * @returns {Boolean}
+   * @private
    */
   _hasListeners(path) {
     return this._events.listenerCount(path) > 0;
@@ -306,6 +322,7 @@ class FastJson {
    * @param {String|Buffer} data
    * @param {Object} frame
    * @returns {String}
+   * @private
    */
   _resolvePathForPrimitiveObject(data, frame) {
     return `${frame.path}${
@@ -315,6 +332,7 @@ class FastJson {
   /**
    * @param {Object} frame
    * @returns {String}
+   * @private
    */
   static _resolvePathForPrimitiveArray(frame) {
     return `${frame.path}${frame.index}${SEP}`;
@@ -322,6 +340,7 @@ class FastJson {
 
   /**
    * @param {String} path
+   * @private
    */
   _addToSubPaths(path) {
     let subPath = SEP;
@@ -337,6 +356,7 @@ class FastJson {
    * @param {String|Buffer} data
    * @param {Number} index
    * @returns {Number}
+   * @private
    */
   static _get(data, index) {
     if (typeof data === 'string') {
@@ -351,6 +371,7 @@ class FastJson {
    * @param {Number} start
    * @param {Number} end
    * @returns {String}
+   * @private
    */
   static _toString(data, start, end) {
     if (typeof data === 'string') {
@@ -363,6 +384,7 @@ class FastJson {
   /**
    * @param {Array|String} origPath
    * @returns {String}
+   * @private
    */
   static _normalizePath(origPath) {
     if (Array.isArray(origPath)) {
@@ -376,3 +398,9 @@ class FastJson {
 }
 
 module.exports = FastJson;
+
+/**
+ * @callback FastJson~jsonListener
+ * @param {String|Buffer} value The found value type will depend of the type used in
+ *   {@link FastJson#write}.
+ */
