@@ -1,4 +1,4 @@
-// Commit 56b20798f15867dbb9b22158a68e676b7d09ed21
+// Commit d44a0fab68a06fbc2dd76e51c011689342df1a91
 
 const EventEmitter = require('events');
 
@@ -267,6 +267,7 @@ class FastJson {
     for (let i = index; ;i++) {
       switch (FastJson._get(data, i)) {
         case CLOSE_BRACKET: case CLOSE_BRACE: case COMMA:
+        case TAB: case CARRIAGE_RETURN: case NEW_LINE: case SPACE:
           return i;
         default:
       }
