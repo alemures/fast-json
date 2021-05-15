@@ -20,26 +20,37 @@ describe('FastJson', () => {
         nMatches++;
       });
       fastJson.on('b', (value) => {
-        expect(value).to.be.equal('hello');
-        nMatches++;
-      });
-      fastJson.on('c', (value) => {
         expect(value).to.be.equal('true');
         nMatches++;
       });
-      fastJson.on('d', (value) => {
+      fastJson.on('c', (value) => {
         expect(value).to.be.equal('null');
         nMatches++;
       });
-      fastJson.on('e', (value) => {
+      fastJson.on('d', (value) => {
         expect(value).to.be.equal('1.2323');
         nMatches++;
       });
 
       fastJson.write(JSON.stringify({
-        a: 1, b: 'hello', c: true, d: null, e: 1.2323,
+        a: 1, b: true, c: null, d: 1.2323,
       }));
-      expect(nMatches).to.be.equal(5);
+      expect(nMatches).to.be.equal(4);
+    });
+
+    it('should return strings', () => {
+      const fastJson = new FastJson();
+      let nMatches = 0;
+
+      fastJson.on('a', (value) => {
+        expect(value).to.be.equal('hello world!');
+        nMatches++;
+      });
+
+      fastJson.write(JSON.stringify({
+        a: 'hello world!',
+      }));
+      expect(nMatches).to.be.equal(1);
     });
 
     it('should return arrays and objects', () => {
