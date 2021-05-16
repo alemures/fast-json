@@ -1,4 +1,6 @@
-const { EventTree } = require('./EventTree');
+// Commit d44a0fab68a06fbc2dd76e51c011689342df1a91
+
+const EventEmitter = require('events');
 
 const OPEN_BRACE = '{'.charCodeAt(0);
 const CLOSE_BRACE = '}'.charCodeAt(0);
@@ -15,21 +17,23 @@ const BACKSLASH = '\\'.charCodeAt(0);
 
 const TYPE_ARRAY = 1;
 const TYPE_OBJECT = 2;
-const ROOT_KEY = '/';
+
+const SEP = '/';
 
 class FastJson {
   /**
    * @param {Object} [options] The fast-json configuration object.
    */
   constructor(options) {
-    this._options = options !== undefined ? options : {};
+    this._options = options || {};
 
     this._stack = [];
     this._postColon = false;
     this._lastString = {};
     this._skipped = false;
 
-    this._events = new EventTree(ROOT_KEY);
+    this._events = new EventEmitter();
+    this._subPaths = new Set([SEP]);
   }
 
   /**
@@ -38,7 +42,9 @@ class FastJson {
    * @param {FastJson~jsonListener} listener The function called after finding the JSON path.
    */
   on(path, listener) {
-    this._events.on(path, listener);
+    const normPath = FastJson._normalizePath(path);
+    this._addToSubPaths(normPath);
+    this._events.on(normPath, listener);
   }
 
   /**
@@ -89,7 +95,6 @@ class FastJson {
     this._stack = [];
     this._postColon = false;
     this._skipped = false;
-    this._events.reset();
   }
 
   /**
@@ -102,18 +107,16 @@ class FastJson {
    * @private
    */
   _onOpenBlock(data, index, type, openChar, closeChar) {
-    const key = this._getKey(data);
-    if (!this._events.hasNode(key)) {
+    const path = this._resolvePath(data);
+    if (!this._subPaths.has(path)) {
       return FastJson._skipBlock(data, index, openChar, closeChar);
     }
-
-    this._events.down(key);
 
     this._stack.push({
       // General
       type,
       start: index,
-      key,
+      path,
 
       // TYPE_ARRAY
       index: 0,
@@ -133,11 +136,9 @@ class FastJson {
     const frame = this._stack.pop();
     frame.end = index;
 
-    if (this._events.hasListener()) {
-      this._events.emit(data.slice(frame.start, frame.end + 1));
+    if (this._hasListeners(frame.path)) {
+      this._events.emit(frame.path, data.slice(frame.start, frame.end + 1));
     }
-
-    this._events.up();
   }
 
   /**
@@ -147,10 +148,23 @@ class FastJson {
    * @private
    */
   _onQuote(data, index) {
+    const frame = this._getFrame();
     const strStart = index + 1;
     const strEnd = FastJson._parseString(data, index);
 
-    this._emitPrimitiveOrString(data, strStart, strEnd);
+    if (this._postColon) {
+      const path = this._resolvePathForPrimitiveObject(data, frame);
+
+      if (this._hasListeners(path)) {
+        this._events.emit(path, data.slice(strStart, strEnd));
+      }
+    } else if (frame.type === TYPE_ARRAY) {
+      const path = FastJson._resolvePathForPrimitiveArray(frame);
+
+      if (this._hasListeners(path)) {
+        this._events.emit(path, data.slice(strStart, strEnd));
+      }
+    }
 
     this._postColon = false;
     this._lastString.start = strStart;
@@ -173,41 +187,26 @@ class FastJson {
    * @private
    */
   _onPrimitive(data, index) {
+    const frame = this._getFrame();
     const primEnd = FastJson._parsePrimitive(data, index);
 
-    this._emitPrimitiveOrString(data, index, primEnd);
+    if (this._postColon) {
+      const path = this._resolvePathForPrimitiveObject(data, frame);
+
+      if (this._hasListeners(path)) {
+        this._events.emit(path, data.slice(index, primEnd));
+      }
+    } else if (frame.type === TYPE_ARRAY) {
+      const path = FastJson._resolvePathForPrimitiveArray(frame);
+
+      if (this._hasListeners(path)) {
+        this._events.emit(path, data.slice(index, primEnd));
+      }
+    }
 
     this._postColon = false;
 
     return index + (primEnd - index - 1);
-  }
-
-  _emitPrimitiveOrString(data, start, end) {
-    const frame = this._getFrame();
-
-    if (this._postColon) {
-      const key = this._getKeyForPrimitiveObject(data);
-      if (this._events.hasNode(key)) {
-        this._events.down(key);
-
-        if (this._events.hasListener()) {
-          this._events.emit(data.slice(start, end));
-        }
-
-        this._events.up();
-      }
-    } else if (frame.type === TYPE_ARRAY) {
-      const key = FastJson._getKeyForPrimitiveArray(frame);
-      if (this._events.hasNode(key)) {
-        this._events.down(key);
-
-        if (this._events.hasListener()) {
-          this._events.emit(data.slice(start, end));
-        }
-
-        this._events.up();
-      }
-    }
   }
 
   /**
@@ -277,20 +276,30 @@ class FastJson {
 
   /**
    * @param {String|Buffer} data
+   * @param {Object} frame
    * @returns {String}
    * @private
    */
-  _getKey(data) {
+  _getParentKey(data, frame) {
+    if (frame.type === TYPE_ARRAY) {
+      return frame.index;
+    }
+
+    return FastJson._toString(data, this._lastString.start, this._lastString.end);
+  }
+
+  /**
+   * @param {String|Buffer} data
+   * @returns {String}
+   * @private
+   */
+  _resolvePath(data) {
     if (this._stack.length === 0) {
-      return ROOT_KEY;
+      return SEP;
     }
 
     const frame = this._getFrame();
-    if (frame.type === TYPE_ARRAY) {
-      return FastJson._getKeyForPrimitiveArray(frame);
-    }
-
-    return this._getKeyForPrimitiveObject(data);
+    return `${frame.path}${this._getParentKey(data, frame)}${SEP}`;
   }
 
   /**
@@ -302,12 +311,23 @@ class FastJson {
   }
 
   /**
+   * @param {String} path
+   * @returns {Boolean}
+   * @private
+   */
+  _hasListeners(path) {
+    return this._events.listenerCount(path) > 0;
+  }
+
+  /**
    * @param {String|Buffer} data
+   * @param {Object} frame
    * @returns {String}
    * @private
    */
-  _getKeyForPrimitiveObject(data) {
-    return FastJson._toString(data, this._lastString.start, this._lastString.end);
+  _resolvePathForPrimitiveObject(data, frame) {
+    return `${frame.path}${
+      FastJson._toString(data, this._lastString.start, this._lastString.end)}${SEP}`;
   }
 
   /**
@@ -315,8 +335,22 @@ class FastJson {
    * @returns {String}
    * @private
    */
-  static _getKeyForPrimitiveArray(frame) {
-    return `${frame.index}`;
+  static _resolvePathForPrimitiveArray(frame) {
+    return `${frame.path}${frame.index}${SEP}`;
+  }
+
+  /**
+   * @param {String} path
+   * @private
+   */
+  _addToSubPaths(path) {
+    let subPath = SEP;
+    const tokens = path.split(SEP);
+
+    for (let i = 1; i < tokens.length - 1; i++) {
+      subPath += `${tokens[i]}${SEP}`;
+      this._subPaths.add(subPath);
+    }
   }
 
   /**
@@ -346,6 +380,21 @@ class FastJson {
     }
 
     return data.toString(undefined, start, end);
+  }
+
+  /**
+   * @param {Array|String} origPath
+   * @returns {String}
+   * @private
+   */
+  static _normalizePath(origPath) {
+    if (Array.isArray(origPath)) {
+      return `${SEP}${origPath.join(SEP)}${SEP}`;
+    }
+
+    let path = origPath.replace(/[.[]/g, SEP);
+    path = path.replace(/\]/g, '') + SEP;
+    return !path.startsWith(SEP) ? `${SEP}${path}` : path;
   }
 }
 

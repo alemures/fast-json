@@ -40,6 +40,14 @@ fastJson.on(['unknown.country', 'people', '0', 'name'], (value) => {
   fastJson.skip();
 });
 
+fastJson.on('spain.people[*].name', (value) => {
+  console.log('spain.people[*].name ->', value);
+});
+
+fastJson.on('*.people[*].name', (value) => {
+  console.log('*.people[*].name ->', value);
+});
+
 fastJson.write(data);
 // or
 fastJson.write(Buffer.from(data));
@@ -53,7 +61,8 @@ JSON file *citylots.json* of **189MB** from https://github.com/zemirco/sf-city-l
 * jsonparse: 15.0s / 1,100MB RAM (Only reading, it wasn't able to return a value)
 
 ## TODO
-* [**Improvement**] Tolerate malformed JSONs.
-* [**Feature**] Process wildcards in paths.
-* [**Documentation**] Document public interface and create branch gh-pages using *jsdoc*.
+* [**Feature**] Allow chunked JSON.
+* [**Feature**] Match more glob patters.
+* [**Feature**] Add more flexibility to event listeners (on, once, off, etc).
+* [**Documentation**] Create branch gh-pages using *jsdoc*.
 * [**Documentation**] More real life testing and examples.

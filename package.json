@@ -1,15 +1,15 @@
 {
   "name": "fast-json",
   "description": "A lightning fast on the fly JSON parser",
-  "version": "1.2.1",
+  "version": "2.0.0",
   "author": "Alejandro Santiago Nieto",
   "license": "MIT",
   "devDependencies": {
     "chai": "^4.3.4",
     "eslint": "^7.26.0",
     "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.22.1",
-    "jsdoc": "^3.6.6",
+    "eslint-plugin-import": "^2.23.2",
+    "jsdoc": "^3.6.7",
     "mocha": "^8.4.0",
     "nyc": "^15.1.0"
   },
@@ -21,10 +21,11 @@
   "scripts": {
     "test": "mocha test/*.js",
     "test:cover": "nyc --reporter=lcov --reporter=text-summary npm test",
-    "lint": "eslint index.js lib/*.js test/*.js example/*.js",
-    "lint:fix": "eslint index.js lib/*.js test/*.js example/*.js --fix",
+    "lint": "eslint index.js lib/*.js test/*.js example/*.js benchmark/*.js",
+    "lint:fix": "eslint index.js lib/*.js test/*.js example/*.js benchmark/*.js --fix",
     "check": "npm test && npm run lint && npm outdated",
-    "doc": "jsdoc ./lib/ ./package.json ./README.md -d ./doc"
+    "doc": "jsdoc ./lib/ ./package.json ./README.md -d ./doc",
+    "benchmark": "node benchmark/index.js"
   },
   "repository": {
     "type": "git",

@@ -29,4 +29,12 @@ fastJson.on(['unknown.country', 'people', '0', 'name'], (value) => {
   fastJson.skip();
 });
 
+fastJson.on('spain.people[*].name', (value) => {
+  console.log('spain.people[*].name ->', value);
+});
+
+fastJson.on('*.people[*].name', (value) => {
+  console.log('*.people[*].name ->', value);
+});
+
 fastJson.write(data);
