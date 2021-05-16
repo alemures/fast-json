@@ -1,15 +1,15 @@
 {
   "name": "fast-json",
   "description": "A lightning fast on the fly JSON parser",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "author": "Alejandro Santiago Nieto",
   "license": "MIT",
   "devDependencies": {
     "chai": "^4.3.4",
     "eslint": "^7.26.0",
     "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.22.1",
-    "jsdoc": "^3.6.6",
+    "eslint-plugin-import": "^2.23.2",
+    "jsdoc": "^3.6.7",
     "mocha": "^8.4.0",
     "nyc": "^15.1.0"
   },
