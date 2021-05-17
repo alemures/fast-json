@@ -79,13 +79,17 @@ describe('FastJson', () => {
       fastJson.write(JSON.stringify({ b: 1 }));
     });
 
-    it('should\'t return anything for empty path', () => {
+    it('should return full JSON for empty path', () => {
       const fastJson = new FastJson();
-      fastJson.on('', () => {
-        expect(true).to.be.equal(false);
+      const jsonString = JSON.stringify({ b: 1 });
+      fastJson.on('', (value) => {
+        expect(value).to.be.equal(jsonString);
+      });
+      fastJson.on([], (value) => {
+        expect(value).to.be.equal(jsonString);
       });
 
-      fastJson.write(JSON.stringify({ b: 1 }));
+      fastJson.write(jsonString);
     });
 
     it('should return inner values', () => {
