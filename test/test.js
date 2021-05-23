@@ -8,6 +8,24 @@ describe('FastJson', () => {
     it('should create an FastJson instance', () => {
       expect(new FastJson()).to.be.instanceOf(FastJson);
     });
+
+    it('should set a custom path separator', () => {
+      const fastJson = new FastJson({ pathSeparator: '/' });
+      let nMatches = 0;
+
+      fastJson.on('user/first.name', (value) => {
+        expect(value).to.be.equal('Alejandro');
+        nMatches++;
+      });
+
+      fastJson.write(JSON.stringify({
+        user: {
+          'first.name': 'Alejandro',
+          'last.name': 'Santiago',
+        },
+      }));
+      expect(nMatches).to.be.equal(1);
+    });
   });
 
   describe('write/on', () => {
@@ -210,6 +228,55 @@ describe('FastJson', () => {
       expect(nMatches).to.be.equal(2);
     });
   });
+
+  describe('Edge cases', () => {
+    it('should handle escaped strings', () => {
+      const fastJson = new FastJson();
+      let nMatches = 0;
+
+      fastJson.on('a.a', (value) => {
+        expect(value).to.be.equal('\\\\\\"\\\\');
+        nMatches++;
+      });
+
+      fastJson.write(JSON.stringify({
+        a: { a: '\\"\\' },
+        b: { a: ']}' },
+        c: { a: '{[' },
+      }));
+
+      expect(nMatches).to.be.equal(1);
+    });
+
+    it('should return primitives ignoring special characters around', () => {
+      const fastJson = new FastJson();
+      let nMatches = 0;
+
+      fastJson.on('a', (value) => {
+        expect(value).to.be.equal('1');
+        nMatches++;
+      });
+      fastJson.on('b', (value) => {
+        expect(value).to.be.equal('true');
+        nMatches++;
+      });
+      fastJson.on('c', (value) => {
+        expect(value).to.be.equal('null');
+        nMatches++;
+      });
+      fastJson.on('d', (value) => {
+        expect(value).to.be.equal('1.2323');
+        nMatches++;
+      });
+
+      fastJson.write('{"a": 1 }');
+      fastJson.write('{"b":\rtrue\r}');
+      fastJson.write('{"c":\tnull\t}');
+      fastJson.write('{"d":\n1.2323\n}');
+
+      expect(nMatches).to.be.equal(4);
+    });
+  });
 });
 
 describe('EventTree', () => {
@@ -221,114 +288,26 @@ describe('EventTree', () => {
 
   describe('_parsePath', () => {
     it('should parse a path as String', () => {
-      let path = EventTree._parsePath('a.b[5].c');
+      const eventTree = new EventTree('/');
+      let path = eventTree._parsePath('a.b[5].c');
       expect(path).to.be.deep.equal(['a', 'b', '5', 'c']);
-      path = EventTree._parsePath('[1][2].a');
+      path = eventTree._parsePath('[1][2].a');
       expect(path).to.be.deep.equal(['1', '2', 'a']);
     });
 
     it('should parse a path as Array just returning it', () => {
+      const eventTree = new EventTree('/');
       const origPath = ['a', 'b', '5', 'c'];
-      const path = EventTree._parsePath(origPath);
+      const path = eventTree._parsePath(origPath);
       expect(path).to.be.deep.equal(origPath);
     });
-  });
 
-  describe('Edge cases', () => {
-    it('should handle escaped strings', () => {
-      const fastJson = new FastJson();
-      let nMatches = 0;
-
-      fastJson.on('a.a', (value) => {
-        expect(value).to.be.equal('\\\\\\"\\\\');
-        nMatches++;
-      });
-
-      fastJson.write(JSON.stringify({
-        a: { a: '\\"\\' },
-        b: { a: ']}' },
-        c: { a: '{[' },
-      }));
-
-      expect(nMatches).to.be.equal(1);
-    });
-
-    it('should return primitives ignoring special characters around', () => {
-      const fastJson = new FastJson();
-      let nMatches = 0;
-
-      fastJson.on('a', (value) => {
-        expect(value).to.be.equal('1');
-        nMatches++;
-      });
-      fastJson.on('b', (value) => {
-        expect(value).to.be.equal('true');
-        nMatches++;
-      });
-      fastJson.on('c', (value) => {
-        expect(value).to.be.equal('null');
-        nMatches++;
-      });
-      fastJson.on('d', (value) => {
-        expect(value).to.be.equal('1.2323');
-        nMatches++;
-      });
-
-      fastJson.write('{"a": 1 }');
-      fastJson.write('{"b":\rtrue\r}');
-      fastJson.write('{"c":\tnull\t}');
-      fastJson.write('{"d":\n1.2323\n}');
-
-      expect(nMatches).to.be.equal(4);
-    });
-  });
-
-  describe('Edge cases', () => {
-    it('should handle escaped strings', () => {
-      const fastJson = new FastJson();
-      let nMatches = 0;
-
-      fastJson.on('a.a', (value) => {
-        expect(value).to.be.equal('\\\\\\"\\\\');
-        nMatches++;
-      });
-
-      fastJson.write(JSON.stringify({
-        a: { a: '\\"\\' },
-        b: { a: ']}' },
-        c: { a: '{[' },
-      }));
-
-      expect(nMatches).to.be.equal(1);
-    });
-
-    it('should return primitives ignoring special characters around', () => {
-      const fastJson = new FastJson();
-      let nMatches = 0;
-
-      fastJson.on('a', (value) => {
-        expect(value).to.be.equal('1');
-        nMatches++;
-      });
-      fastJson.on('b', (value) => {
-        expect(value).to.be.equal('true');
-        nMatches++;
-      });
-      fastJson.on('c', (value) => {
-        expect(value).to.be.equal('null');
-        nMatches++;
-      });
-      fastJson.on('d', (value) => {
-        expect(value).to.be.equal('1.2323');
-        nMatches++;
-      });
-
-      fastJson.write('{"a": 1 }');
-      fastJson.write('{"b":\rtrue\r}');
-      fastJson.write('{"c":\tnull\t}');
-      fastJson.write('{"d":\n1.2323\n}');
-
-      expect(nMatches).to.be.equal(4);
+    it('should parse a path as String using a custom path separator', () => {
+      const eventTree = new EventTree('/', '#');
+      let path = eventTree._parsePath('a#b#5#c');
+      expect(path).to.be.deep.equal(['a', 'b', '5', 'c']);
+      path = eventTree._parsePath('1#2#a');
+      expect(path).to.be.deep.equal(['1', '2', 'a']);
     });
   });
 });
