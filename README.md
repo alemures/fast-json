@@ -18,28 +18,21 @@ const data = JSON.stringify({
   spain: {
     people: [{ name: 'Antonio' }, { name: 'Juan' }, { name: 'Pedro' }],
   },
-  'unknown.country': {
-    people: [{ name: 'Frank' }, { name: 'Paul' }],
-  },
 });
 
 const fastJson = new FastJson();
 
+// Path is a string representing a javascript object path
 fastJson.on('ireland.people', (value) => {
   console.log('ireland.people ->', value);
 });
 
-fastJson.on('spain.people[1].name', (value) => {
-  console.log('spain.people[1].name ->', value);
+// Paths can be also an array of keys
+fastJson.on(['spain', 'people', '1', 'name'], (value) => {
+  console.log(['spain', 'people', '1', 'name'], '->', value);
 });
 
-// Path as Array to allow keys with dots
-fastJson.on(['unknown.country', 'people', '0', 'name'], (value) => {
-  console.log(['unknown.country', 'people', '0', 'name'], value);
-  // Stop parsing JSON usefull when have all we need improving performance
-  fastJson.skip();
-});
-
+// Wildcards can be used to match all items in object or array
 fastJson.on('spain.people[*].name', (value) => {
   console.log('spain.people[*].name ->', value);
 });
@@ -49,8 +42,26 @@ fastJson.on('*.people[*].name', (value) => {
 });
 
 fastJson.write(data);
-// or
-fastJson.write(Buffer.from(data));
+// The JSON can be string or Buffer
+// fastJson.write(Buffer.from(data))
+```
+
+```javascript
+fastJson.on('ireland.people[1].name', (value) => {
+  console.log('ireland.people[1].name ->', value);
+  // Once we have all we need, we can skip the rest of the JSON to improve performance.
+  fastJson.skip();
+});
+```
+
+```javascript
+// Path separator defines the keys separator on the listeners
+const fastJson = new FastJson({ pathSeparator: '/' });
+
+// In this case it allows keys having dots by using a different separator
+fastJson.on('unknown.country/people/0/name', (value) => {
+  console.log('unknown.country/people/0/name ->', value);
+});
 ```
 
 ## Performance

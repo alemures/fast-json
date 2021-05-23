@@ -8,6 +8,24 @@ describe('FastJson', () => {
     it('should create an FastJson instance', () => {
       expect(new FastJson()).to.be.instanceOf(FastJson);
     });
+
+    it('should set a custom path separator', () => {
+      const fastJson = new FastJson({ pathSeparator: '/' });
+      let nMatches = 0;
+
+      fastJson.on('user/first.name', (value) => {
+        expect(value).to.be.equal('Alejandro');
+        nMatches++;
+      });
+
+      fastJson.write(JSON.stringify({
+        user: {
+          'first.name': 'Alejandro',
+          'last.name': 'Santiago',
+        },
+      }));
+      expect(nMatches).to.be.equal(1);
+    });
   });
 
   describe('write/on', () => {
@@ -270,16 +288,26 @@ describe('EventTree', () => {
 
   describe('_parsePath', () => {
     it('should parse a path as String', () => {
-      let path = EventTree._parsePath('a.b[5].c');
+      const eventTree = new EventTree('/');
+      let path = eventTree._parsePath('a.b[5].c');
       expect(path).to.be.deep.equal(['a', 'b', '5', 'c']);
-      path = EventTree._parsePath('[1][2].a');
+      path = eventTree._parsePath('[1][2].a');
       expect(path).to.be.deep.equal(['1', '2', 'a']);
     });
 
     it('should parse a path as Array just returning it', () => {
+      const eventTree = new EventTree('/');
       const origPath = ['a', 'b', '5', 'c'];
-      const path = EventTree._parsePath(origPath);
+      const path = eventTree._parsePath(origPath);
       expect(path).to.be.deep.equal(origPath);
+    });
+
+    it('should parse a path as String using a custom path separator', () => {
+      const eventTree = new EventTree('/', '#');
+      let path = eventTree._parsePath('a#b#5#c');
+      expect(path).to.be.deep.equal(['a', 'b', '5', 'c']);
+      path = eventTree._parsePath('1#2#a');
+      expect(path).to.be.deep.equal(['1', '2', 'a']);
     });
   });
 });
