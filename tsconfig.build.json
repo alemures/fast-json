@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  // Use only sources for building
+  "include": ["src"]
+}

@@ -1,6 +1,5 @@
 const fs = require('fs');
-
-const FastJson = require('../lib/FastJson');
+const { FastJson } = require('../dist/index');
 
 const fastJson = new FastJson();
 
@@ -20,6 +19,9 @@ console.time('JSON.parse() time');
 
 // Huge amount of RAM used
 const object = JSON.parse(file);
-console.log('JSON.parse() result:', object.features[293].geometry.coordinates[0][0]);
+console.log(
+  'JSON.parse() result:',
+  object.features[293].geometry.coordinates[0][0]
+);
 
 console.timeEnd('JSON.parse() time');

@@ -1,15 +1,17 @@
-fast-json
-===
+# fast-json
+
 A lightning fast on the fly **JSON parser** able to return JSON values and structures from plain JSON as `String` or `Buffer`. It's much faster than JSON.parse() and doesn't require any extra memory allocation for the data processed.
 
 ## Install
+
 ```
 npm install fast-json
 ```
 
 ## Usage
+
 ```javascript
-const FastJson = require('fast-json');
+const { FastJson } = require('fast-json');
 
 const data = JSON.stringify({
   ireland: {
@@ -65,15 +67,17 @@ fastJson.on('unknown.country/people/0/name', (value) => {
 ```
 
 ## Performance
-JSON file *citylots.json* of **189MB** from https://github.com/zemirco/sf-city-lots-json.
 
-* **fast-json: 0.56s / 198MB RAM**
-* JSON.parse: 1.8s / 640MB RAM
-* jsonparse: 15.0s / 1,100MB RAM (Only reading, it wasn't able to return a value)
+JSON file _citylots.json_ of **189MB** from https://github.com/zemirco/sf-city-lots-json.
+
+- **fast-json: 0.56s / 198MB RAM**
+- JSON.parse: 1.8s / 640MB RAM
+- jsonparse: 15.0s / 1,100MB RAM (Only reading, it wasn't able to return a value)
 
 ## TODO
-* [**Feature**] Allow chunked JSON.
-* [**Feature**] Match more glob patters.
-* [**Feature**] Add more flexibility to event listeners (on, once, off, etc).
-* [**Documentation**] Create branch gh-pages using *jsdoc*.
-* [**Documentation**] More real life testing and examples.
+
+- [**Feature**] Allow chunked JSON.
+- [**Feature**] Match more glob patters.
+- [**Feature**] Add more flexibility to event listeners (on, once, off, etc).
+- [**Documentation**] Create branch gh-pages using _jsdoc_.
+- [**Documentation**] More real life testing and examples.

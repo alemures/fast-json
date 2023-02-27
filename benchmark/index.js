@@ -1,16 +1,19 @@
 const Benchmark = require('benchmark');
-const FastJson = require('../index');
+const { FastJson } = require('../dist/index');
 const OldFastJson = require('./FastJson');
 
 const suite = new Benchmark.Suite();
 
 write(suite);
 
-suite.on('cycle', (event) => {
-  console.log(String(event.target));
-}).on('complete', () => {
-  console.log(`Fastest is ${suite.filter('fastest').map('name')}`);
-}).run({ async: true });
+suite
+  .on('cycle', (event) => {
+    console.log(String(event.target));
+  })
+  .on('complete', () => {
+    console.log(`Fastest is ${suite.filter('fastest').map('name')}`);
+  })
+  .run({ async: true });
 
 function write(suite) {
   const data = JSON.stringify({
@@ -37,9 +40,11 @@ function write(suite) {
   fastJson.on(path, (value) => {});
   oldFastJson.on(path, (value) => {});
 
-  suite.add('FastJson.write develop', () => {
-    fastJson.write(data);
-  }).add('FastJson.write old', () => {
-    oldFastJson.write(data);
-  });
+  suite
+    .add('FastJson.write develop', () => {
+      fastJson.write(data);
+    })
+    .add('FastJson.write old', () => {
+      oldFastJson.write(data);
+    });
 }

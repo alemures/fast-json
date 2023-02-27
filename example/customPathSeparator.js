@@ -1,4 +1,4 @@
-const FastJson = require('../lib/FastJson');
+const { FastJson } = require('../dist/index');
 
 const data = JSON.stringify({
   'unknown.country': {

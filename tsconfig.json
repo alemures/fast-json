@@ -1,0 +1,15 @@
+{
+  "include": ["src", "test"],
+  "compilerOptions": {
+    // Targeting NodeJS 12 (oldest supported LTS version)
+    "lib": ["ES2019"],
+    "module": "CommonJS",
+    "target": "ES2019",
+    "outDir": "dist",
+    "declaration": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true
+  }
+}
