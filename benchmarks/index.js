@@ -1,3 +1,7 @@
+/**
+ * Compares the current implementation with an old FastJson version.
+ */
+
 const Benchmark = require('benchmark');
 const { FastJson } = require('../dist/index');
 const OldFastJson = require('./FastJson');

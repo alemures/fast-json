@@ -1,4 +1,4 @@
 node_modules
 dist
 coverage
-example/json/citylots.json
+examples/json/citylots.json

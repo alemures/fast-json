@@ -18,5 +18,11 @@
     "no-underscore-dangle": "error",
     "@typescript-eslint/strict-boolean-expressions": "error"
   },
-  "ignorePatterns": ["node_modules", "dist", "coverage", "example", "benchmark"]
+  "ignorePatterns": [
+    "node_modules",
+    "dist",
+    "coverage",
+    "examples",
+    "benchmarks"
+  ]
 }
