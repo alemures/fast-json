@@ -241,5 +241,130 @@ describe('FastJson', () => {
       expect(fn).toHaveBeenNthCalledWith(3, 'null');
       expect(fn).toHaveBeenNthCalledWith(4, '1.2323');
     });
+    it('should handle deeply nested objects', () => {
+      const fastJson = new FastJson();
+      const fn = jest.fn();
+
+      fastJson.on('a.b.c.d.e.f.g', fn);
+
+      fastJson.write(
+        JSON.stringify({ a: { b: { c: { d: { e: { f: { g: 42 } } } } } } })
+      );
+
+      expect(fn).toHaveBeenCalledWith('42');
+    });
+
+    it('should handle large JSON inputs', () => {
+      const fastJson = new FastJson();
+      const fn = jest.fn();
+      const largeJson = JSON.stringify({ a: Array(10000).fill({ b: 'test' }) });
+
+      fastJson.on('a[9999].b', fn);
+      fastJson.write(largeJson);
+
+      expect(fn).toHaveBeenCalledWith('test');
+    });
+
+    it('should handle non-JSON inputs gracefully', () => {
+      const fastJson = new FastJson();
+      const fn = jest.fn();
+
+      fastJson.on('a', fn);
+      expect(() => fastJson.write('random string')).toThrow();
+      expect(() => fastJson.write('{invalidJson')).toThrow();
+    });
+
+    it('should handle empty objects and arrays', () => {
+      const fastJson = new FastJson();
+      const fn = jest.fn();
+
+      fastJson.on('a', fn);
+      fastJson.on('b', fn);
+
+      fastJson.write(JSON.stringify({ a: {}, b: [] }));
+
+      expect(fn).toHaveBeenNthCalledWith(1, '{}');
+      expect(fn).toHaveBeenNthCalledWith(2, '[]');
+    });
+
+    it('should handle boolean and null keys', () => {
+      const fastJson = new FastJson();
+      const fn = jest.fn();
+
+      fastJson.on('true', fn);
+      fastJson.on('false', fn);
+      fastJson.on('null', fn);
+
+      fastJson.write(
+        JSON.stringify({ true: 'yes', false: 'no', null: 'none' })
+      );
+
+      expect(fn).toHaveBeenNthCalledWith(1, 'yes');
+      expect(fn).toHaveBeenNthCalledWith(2, 'no');
+      expect(fn).toHaveBeenNthCalledWith(3, 'none');
+    });
+
+    it('should handle deeply nested objects', () => {
+      const fastJson = new FastJson();
+      const fn = jest.fn();
+
+      fastJson.on('a.b.c.d.e.f.g', fn);
+
+      fastJson.write(
+        JSON.stringify({ a: { b: { c: { d: { e: { f: { g: 42 } } } } } } })
+      );
+
+      expect(fn).toHaveBeenCalledWith('42');
+    });
+
+    it('should handle large JSON inputs', () => {
+      const fastJson = new FastJson();
+      const fn = jest.fn();
+      const largeJson = JSON.stringify({ a: Array(10000).fill({ b: 'test' }) });
+
+      fastJson.on('a[9999].b', fn);
+      fastJson.write(largeJson);
+
+      expect(fn).toHaveBeenCalledWith('test');
+    });
+
+    it('should handle non-JSON inputs gracefully', () => {
+      const fastJson = new FastJson();
+      const fn = jest.fn();
+
+      fastJson.on('a', fn);
+      expect(() => fastJson.write('random string')).toThrow();
+      expect(() => fastJson.write('{invalidJson')).toThrow();
+    });
+
+    it('should handle empty objects and arrays', () => {
+      const fastJson = new FastJson();
+      const fn = jest.fn();
+
+      fastJson.on('a', fn);
+      fastJson.on('b', fn);
+
+      fastJson.write(JSON.stringify({ a: {}, b: [] }));
+
+      expect(fn).toHaveBeenNthCalledWith(1, '{}');
+      expect(fn).toHaveBeenNthCalledWith(2, '[]');
+    });
+
+    it('should handle boolean and null keys', () => {
+      const fastJson = new FastJson();
+      const fn = jest.fn();
+
+      fastJson.on('true', fn);
+      fastJson.on('false', fn);
+      fastJson.on('null', fn);
+
+      fastJson.write(
+        JSON.stringify({ true: 'yes', false: 'no', null: 'none' })
+      );
+
+      expect(fn).toHaveBeenNthCalledWith(1, 'yes');
+      expect(fn).toHaveBeenNthCalledWith(2, 'no');
+      expect(fn).toHaveBeenNthCalledWith(3, 'none');
+    });
   });
 });
